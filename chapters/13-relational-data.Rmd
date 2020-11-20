@@ -1,0 +1,125 @@
+---
+title: "13 Relational data"
+output: html_notebook
+---
+
+13.1 Introduction
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+library(viridis)
+```
+
+13.2 nycflights13
+
+```{r}
+flights_latlon <- flights %>%
+  inner_join(select(airports, origin = faa, origin_lat = lat, origin_lon = lon),
+    by = "origin"
+  ) %>%
+  inner_join(select(airports, dest = faa, dest_lat = lat, dest_lon = lon),
+    by = "dest"
+  )
+```
+
+```{r}
+flights_latlon %>%
+  slice(1:100) %>%
+  ggplot(aes(
+    x = origin_lon, xend = dest_lon,
+    y = origin_lat, yend = dest_lat
+  )) +
+  borders("state") +
+  geom_segment(arrow = arrow(length = unit(0.1, "cm"))) +
+  coord_quickmap() +
+  labs(y = "Latitude", x = "Longitude")
+```
+
+```{r}
+special_days <- tribble(
+  ~year, ~month, ~day, ~holiday,
+  2013, 01, 01, "New Years Day",
+  2013, 07, 04, "Independence Day",
+  2013, 11, 29, "Thanksgiving Day",
+  2013, 12, 25, "Christmas Day"
+)
+```
+
+
+```{r}
+flights %>%
+  arrange(year, month, day, sched_dep_time, carrier, flight) %>%
+  mutate(flight_id = row_number()) %>%
+  glimpse()
+```
+
+```{r}
+Lahman::Batting %>%
+  count(playerID, yearID, stint) %>%
+  filter(n > 1) %>%
+  nrow()
+```
+
+```{r}
+babynames::babynames %>%
+  count(year, sex, name) %>%
+  filter(n > 1) %>%
+  nrow()
+```
+
+```{r}
+nasaweather::atmos %>%
+  count(lat, long, year, month) %>%
+  filter(n > 1) %>%
+  nrow()
+```
+
+```{r}
+fueleconomy::vehicles %>%
+  count(id) %>%
+  filter(n > 1) %>%
+  nrow()
+```
+
+```{r}
+ggplot2::diamonds %>%
+  distinct() %>%
+  nrow()
+```
+
+```{r}
+diamonds <- mutate(ggplot2::diamonds, id = row_number())
+```
+
+```{r}
+flights2 <- flights %>%
+  select(year:day, hour, origin, dest, tailnum, carrier)
+```
+
+```{r}
+airports %>%
+  semi_join(flights, c("faa" = "dest")) %>%
+  ggplot(aes(lon, lat)) +
+  borders("state") +
+  geom_point() +
+  coord_quickmap()
+```
+
+```{r}
+avg_dest_delays <-
+  flights %>%
+  group_by(dest) %>%
+  # arrival delay NA's are cancelled flights
+  summarise(delay = mean(arr_delay, na.rm = TRUE)) %>%
+  inner_join(airports, by = c(dest = "faa"))
+```
+
+```{r}
+avg_dest_delays %>%
+  ggplot(aes(lon, lat, colour = delay)) +
+  borders("state") +
+  geom_point() +
+  coord_quickmap()
+```
+
