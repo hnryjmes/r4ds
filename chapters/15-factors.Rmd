@@ -1,0 +1,26 @@
+```{r}
+library(tidyverse)
+```
+
+```{r}
+x1 <- c("Dec", "Apr", "Jan", "Mar")
+
+month_levels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+y1 <- factor(x1, levels=month_levels)
+y1
+```
+
+
+```{r}
+x2 <- c("Dec", "Apr", "Jam", "Mar")
+
+y2 <- factor(x2, levels = month_levels)
+
+y2
+```
+
+```{r}
+y2 <- parse_factor(x2, levels = month_levels)
+```
+
