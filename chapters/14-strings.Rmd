@@ -1,0 +1,53 @@
+```{r}
+library(tidyverse)
+```
+
+```{r}
+string1 <- "This is a string"
+string2 <- 'If I want to include a "quote" inside a string, I use single quotes'
+```
+
+```{r}
+x <- c("a", "abc", "abcd", "abcde", "abcdef")
+L <- str_length(x)
+m <- ceiling(L / 2)
+str_sub(x, m, m)
+```
+
+```{r}
+str_commasep <- function(x, delim = ",") {
+  n <- length(x)
+  if (n == 0) {
+    ""
+  } else if (n == 1) {
+    x
+  } else if (n == 2) {
+    # no comma before and when n == 2
+    str_c(x[[1]], "and", x[[2]], sep = " ")
+  } else {
+    # commas after all n - 1 elements
+    not_last <- str_c(x[seq_len(n - 1)], delim)
+    # prepend "and" to the last element
+    last <- str_c("and", x[[n]], sep = " ")
+    # combine parts with spaces
+    str_c(c(not_last, last), collapse = " ")
+  }
+}
+```
+
+```{r}
+print(str_commasep(c("a", "b")))
+```
+
+```{r}
+print(str_commasep(c("a", "b", "c", "d")))
+```
+
+```{r}
+str_view("\"'\\", "\"'\\\\", match = TRUE)
+```
+
+```{r}
+mean(str_detect(words, "[aeiou]$"))
+```
+
